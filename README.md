@@ -45,7 +45,7 @@ store.state; // 10
 ## Reference
 
 - [State container](./docs/State-container.md)
-- React
+- [React](./docs/React.md)
 - Routines
 
 
