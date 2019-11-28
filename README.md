@@ -17,7 +17,7 @@ npm install state-containers
 Use
 
 ```ts
-import {StateContainer, PureTransition, createStateContainer} from '../../src';
+import {StateContainer, PureTransition, createStateContainer} from 'state-containers';
 
 type CounterState = number;
 
