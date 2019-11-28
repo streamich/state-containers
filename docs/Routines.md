@@ -1,7 +1,7 @@
 # Routines
 
 Routines are like Redux sagas&mdash;*routines* allow you to listen to transitions happening
-in your state container and execute side-effects, async a actions and trigger new 
+in your state container and execute side-effects, async actions and trigger new 
 transitions.
 
 First you want to define all the services, i.e. side-effects that are available to
@@ -26,7 +26,7 @@ export type TodoRoutine = Routine<typeof store, typeof services>;
 
 const logNewTodos: TodoRoutine  = async ({takeArgs, services}) => {
   while (1) {
-    const [todo] = await takeArgs('add');
+    const [todo] = await takeArgs('add'); // 'add' is strongly typed
     services.logger.log(todo.id, todo.text);
   }
 };
