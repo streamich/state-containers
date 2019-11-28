@@ -8,13 +8,13 @@
 
 ## Usage
 
-Install:
+Install
 
 ```
 npm install state-containers
 ```
 
-Use (TodoMVC example):
+Use
 
 ```ts
 import {StateContainer, PureTransition, createStateContainer} from '../../src';
