@@ -3,6 +3,7 @@
 - Strongly typed state containers with TypeScript.
 - Redux-like but without the boilerplate.
 - Simple state management for your services and React apps.
+- Composable: use just [state containers](./docs/State-container.md), or with [React helpers](./docs/React.md) or add optional [routines](./docs/Routines.md) to the mix.
 
 
 ## Usage
@@ -46,7 +47,7 @@ store.state; // 10
 
 - [State container](./docs/State-container.md)
 - [React](./docs/React.md)
-- Routines
+- [Routines](./docs/Routines.md)
 
 
 ## Examples
