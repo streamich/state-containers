@@ -1,8 +1,8 @@
 # React
 
-State containers are especially easy to use with react. Let's say you have state container
-created previously named `store`. You can create all necessary React helpers for your
-container in `react.ts` file in your project.
+State containers are especially easy to use with React. Let's say you have a state container
+created named `store`. You can create all necessary React helpers for your
+app in `react.ts` file somewhere in your project.
 
 ```ts
 // react.ts
