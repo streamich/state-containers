@@ -53,7 +53,7 @@
     "ts-node": "8.5.4",
     "tslint": "5.20.1",
     "tslint-config-common": "1.6.0",
-    "typescript": "3.7.2"
+    "typescript": "3.7.3"
   },
   "types": "lib/index.d.ts",
   "typings": "lib/index.d.ts",
