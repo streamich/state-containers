@@ -15,7 +15,7 @@ export type PureTransitionsToTransitions<T extends object> = {
   [K in keyof T]: PureTransitionToTransition<EnsurePureTransition<T[K]>>
 };
 
-export interface StateContainer<State, PureTransitions extends object> {
+export interface IStateContainer<State, PureTransitions extends object> {
   state: State;
   getState: () => State;
   state$: Observable<State>;
@@ -30,15 +30,15 @@ export interface StateContainer<State, PureTransitions extends object> {
 export type Dispatch<T> = (action: T) => void;
 
 export type Middleware<State = any> = (
-  store: Pick<StateContainer<State, any>, 'getState' | 'dispatch'>,
+  store: Pick<IStateContainer<State, any>, 'getState' | 'dispatch'>,
 ) => (next: (action: TransitionDescription) => TransitionDescription | any) => Dispatch<TransitionDescription>;
 
 export type Reducer<State> = (state: State, action: TransitionDescription) => State;
 
-export type UnboxState<Container extends StateContainer<any, any>> = Container extends StateContainer<infer T, any>
+export type UnboxState<Container extends IStateContainer<any, any>> = Container extends IStateContainer<infer T, any>
   ? T
   : never;
-export type UnboxTransitions<Container extends StateContainer<any, any>> = Container extends StateContainer<
+export type UnboxTransitions<Container extends IStateContainer<any, any>> = Container extends IStateContainer<
   any,
   infer T
 >

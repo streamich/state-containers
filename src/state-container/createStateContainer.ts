@@ -1,14 +1,18 @@
 import {Subject} from 'rxjs';
-import {StateContainer, PureTransitionsToTransitions} from './types';
+import {IStateContainer, PureTransitionsToTransitions} from './types';
 
 const $$observable = (typeof Symbol === 'function' && (Symbol as any).observable) || '@@observable';
+
+// export class StateContainer<State, PureTransitions extends object> {
+  // private state = 
+// }
 
 export const createStateContainer = <State, PureTransitions extends object>(
   defaultState: State,
   pureTransitions: PureTransitions,
-): StateContainer<State, PureTransitions> => {
+): IStateContainer<State, PureTransitions> => {
   const state$ = new Subject<State>();
-  const container: StateContainer<State, PureTransitions> = {
+  const container: IStateContainer<State, PureTransitions> = {
     state: defaultState,
     getState: () => container.state,
     state$,
