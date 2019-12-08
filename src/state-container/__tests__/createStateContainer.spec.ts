@@ -1,27 +1,13 @@
-import {createStateContainer} from '../createStateContainer';
+import {StateContainer} from '../StateContainer';
 
 const create = <S, T extends object>(state: S, transitions: T = {} as T) => {
   const pureTransitions = {
     set: state => newState => newState,
     ...transitions,
   };
-  const store = createStateContainer<typeof state, typeof pureTransitions>(state, pureTransitions);
+  const store = new StateContainer<typeof state, typeof pureTransitions>(state, pureTransitions);
   return {store, mutators: store.transitions};
 };
-
-test('can create store', () => {
-  const {store} = create({});
-  expect(store).toMatchObject({
-    state: expect.any(Object),
-    getState: expect.any(Function),
-    state$: expect.any(Object),
-    transitions: expect.any(Object),
-    dispatch: expect.any(Function),
-    subscribe: expect.any(Function),
-    replaceReducer: expect.any(Function),
-    addMiddleware: expect.any(Function),
-  });
-});
 
 test('can set default state', () => {
   const defaultState = {

@@ -1,4 +1,4 @@
-import {StateContainer, PureTransition, createStateContainer} from '../../src';
+import {PureTransition, StateContainer} from '../../src';
 
 type CounterState = number;
 
@@ -16,7 +16,7 @@ const pureTransitions: CounterPureTransitions = {
   setTo: ctn => to => to,
 };
 
-const store = createStateContainer(defaultState, pureTransitions);
+const store = new StateContainer(defaultState, pureTransitions);
 
 store.transitions.increment(5);
 store.transitions.double();
