@@ -47,3 +47,6 @@ export class StateContainer<State, PureTransitions extends object> implements IS
     return () => subscription.unsubscribe();
   }
 }
+
+export const createStateContainer = <State, PureTransitions extends object>(state: State, pureTransitions: PureTransitions) =>
+  new StateContainer(state, pureTransitions);
