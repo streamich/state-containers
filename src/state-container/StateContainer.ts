@@ -43,6 +43,7 @@ export class StateContainer<State, PureTransitions extends object, PureSelectors
   addMiddleware(middleware) {
     this.dispatch = middleware({
       getState: () => this.getState(),
+      dispatch: action => this.dispatch(action),
     })(this.dispatch);
   }
 
