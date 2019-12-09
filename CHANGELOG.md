@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/streamich/state-containers/compare/v1.1.0...v1.1.1) (2019-12-09)
+
+
+### Bug Fixes
+
+* 🐛 transpile to ES5 ([d6c1dcd](https://github.com/streamich/state-containers/commit/d6c1dcd907c161531a04590cce63ac0a2d75a1f6))
+
 # [1.1.0](https://github.com/streamich/state-containers/compare/v1.0.0...v1.1.0) (2019-12-09)
 
 
