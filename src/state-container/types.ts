@@ -15,7 +15,7 @@ export type PureTransitionsToTransitions<T extends object> = {
   [K in keyof T]: PureTransitionToTransition<EnsurePureTransition<T[K]>>
 };
 
-export interface IStateContainer<State, PureTransitions extends object> {
+export interface IStateContainer<State, PureTransitions extends object, PureSelectors extends object = {}> {
   state: State;
   getState: () => State;
   state$: Observable<State>;
@@ -23,6 +23,7 @@ export interface IStateContainer<State, PureTransitions extends object> {
   replaceReducer: (nextReducer: Reducer<State>) => void;
   dispatch: (action: TransitionDescription) => void;
   transitions: PureTransitionsToTransitions<PureTransitions>;
+  selectors: Readonly<PureSelectorsToSelectors<PureSelectors>>;
   addMiddleware: (middleware: Middleware<State>) => void;
   subscribe: (listener: (state: State) => void) => () => void;
 }
@@ -44,3 +45,15 @@ export type UnboxTransitions<Container extends IStateContainer<any, any>> = Cont
 >
   ? T
   : never;
+
+export type Selector<Result, Args extends any[] = []> = (...args: Args) => Result;
+export type PureSelector<State, Result, Args extends any[] = []> = (
+  state: State
+) => Selector<Result, Args>;
+export type EnsurePureSelector<T> = Ensure<T, PureSelector<any, any, any>>;
+export type PureSelectorToSelector<T extends PureSelector<any, any, any>> = ReturnType<
+  EnsurePureSelector<T>
+>;
+export type PureSelectorsToSelectors<T extends object> = {
+  [K in keyof T]: PureSelectorToSelector<EnsurePureSelector<T[K]>>;
+};

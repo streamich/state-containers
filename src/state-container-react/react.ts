@@ -1,6 +1,6 @@
 import * as React from 'react';
 import useObservable from 'react-use/lib/useObservable';
-import {Selector, Comparator, Connect} from './types';
+import {Comparator, Connect} from './types';
 import defaultComparator from 'fast-deep-equal';
 import {IStateContainer, UnboxState} from '../state-container';
 
@@ -20,7 +20,7 @@ export const createStateContainerReactHelpers = <Container extends IStateContain
   const useTransitions = () => useContainer().transitions;
 
   const useSelector = <Result>(
-    selector: Selector<UnboxState<Container>, Result>,
+    selector: (state: UnboxState<Container>) => Result,
     comparator: Comparator<Result> = defaultComparator,
   ): Result => {
     const {state$, state} = useContainer();

@@ -1,9 +1,9 @@
 import {Subject} from 'rxjs';
-import {IStateContainer, PureTransitionsToTransitions} from './types';
+import {IStateContainer, PureTransitionsToTransitions, PureSelectorsToSelectors} from './types';
 
 const $$observable = (typeof Symbol === 'function' && (Symbol as any).observable) || '@@observable';
 
-export class StateContainer<State, PureTransitions extends object> implements IStateContainer<State, PureTransitions> {
+export class StateContainer<State, PureTransitions extends object, PureSelectors extends object = {}> implements IStateContainer<State, PureTransitions, PureSelectors> {
   public state$ = new Subject<State>();
   
   public reducer = (state, action) => {
@@ -15,13 +15,17 @@ export class StateContainer<State, PureTransitions extends object> implements IS
     (acc, type) => ({...acc, [type]: (...args) => this.dispatch({type, args})}),
     {} as PureTransitionsToTransitions<PureTransitions>,
   );
-    
-  constructor (public state: State, private readonly pureTransitions: PureTransitions) {
-    this[$$observable] = this.state$;
-  }
 
-  get(): State {
-    return this.state;
+  public selectors = Object.keys(this.pureSelectors).reduce<PureSelectorsToSelectors<PureSelectors>>(
+    (acc, selector) => ({
+      ...acc,
+      [selector]: (...args: any) => (this.pureSelectors as any)[selector](this.state)(...args),
+    }),
+    {} as PureSelectorsToSelectors<PureSelectors>
+  );
+    
+  constructor (public state: State, private readonly pureTransitions: PureTransitions, private readonly pureSelectors: PureSelectors = {} as PureSelectors) {
+    this[$$observable] = this.state$;
   }
 
   getState(): State {
@@ -48,5 +52,5 @@ export class StateContainer<State, PureTransitions extends object> implements IS
   }
 }
 
-export const createStateContainer = <State, PureTransitions extends object>(state: State, pureTransitions: PureTransitions) =>
-  new StateContainer(state, pureTransitions);
+export const createStateContainer = <State, PureTransitions extends object, PureSelectors extends object = {}>(state: State, pureTransitions: PureTransitions, pureSelectors?: PureSelectors) =>
+  new StateContainer(state, pureTransitions, pureSelectors);
