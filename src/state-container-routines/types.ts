@@ -1,5 +1,5 @@
 import {Observable} from 'rxjs';
-import {StateContainer, TransitionDescription, Ensure, UnboxTransitions} from '../state-container/types';
+import {IStateContainer, TransitionDescription, Ensure, UnboxTransitions} from '../state-container/types';
 
 export type Take<T extends string> = <Type extends string = T>(
   actionType: Type,
@@ -14,7 +14,7 @@ export type TakeArgsRace<T extends string> = <Type extends string = T>(
   ...actionTypes: Type[]
 ) => Promise<TransitionDescription<Type>['args']>;
 
-export interface RoutineParams<Container extends StateContainer<any, any>, Services extends object = any> {
+export interface RoutineParams<Container extends IStateContainer<any, any>, Services extends object = any> {
   container: Container;
 
   /**
@@ -48,17 +48,17 @@ export interface RoutineParams<Container extends StateContainer<any, any>, Servi
   takeArgsRace: TakeArgsRace<Ensure<keyof UnboxTransitions<Container>, string>>;
 }
 
-export type Routine<Container extends StateContainer<any, any>, Services extends object = any> = (
+export type Routine<Container extends IStateContainer<any, any>, Services extends object = any> = (
   params: RoutineParams<Container, Services>,
 ) => void;
 
-export type Spawner<Container extends StateContainer<any, any>, Services extends object = any> = (
+export type Spawner<Container extends IStateContainer<any, any>, Services extends object = any> = (
   name: string,
   routine: Routine<Container, Services>,
 ) => void;
 
 export type Spawn<
-  Container extends StateContainer<any, any>,
+  Container extends IStateContainer<any, any>,
   Routines extends object,
   Services extends object = any
 > = (container: Container, routines: Routines, services: Services) => void;

@@ -1,5 +1,5 @@
 import {TodoState, TodoActions} from './types';
-import {createStateContainer, createStateContainerReactHelpers} from '../../src';
+import {StateContainer, createStateContainerReactHelpers} from '../../src';
 
 export const defaultState: TodoState = [
   {
@@ -18,7 +18,7 @@ export const pureTransitions: TodoActions = {
   clearCompleted: state => () => state.filter(({completed}) => !completed),
 };
 
-export const createStore = () => createStateContainer(defaultState, pureTransitions);
+export const createStore = () => new StateContainer(defaultState, pureTransitions);
 export const store = createStore();
 
 export const {Consumer, Provider, connect, context, useContainer, useSelector, useState, useTransitions} = createStateContainerReactHelpers<typeof store>();

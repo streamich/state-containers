@@ -1,9 +1,9 @@
 import {Spawner, Take, TakeRace, TakeArgs, TakeArgsRace, Routine} from './types';
-import {StateContainer, TransitionDescription, UnboxTransitions, Ensure} from '../state-container/types';
+import {IStateContainer, TransitionDescription, UnboxTransitions, Ensure} from '../state-container/types';
 import {Subject} from 'rxjs';
 
 export const createSpawner = <
-  Container extends StateContainer<any, any>,
+  Container extends IStateContainer<any, any>,
   Services extends object = any,
   ActionType extends string = Ensure<keyof UnboxTransitions<Container>, string>
 >(
@@ -67,7 +67,7 @@ export const createSpawner = <
 };
 
 export const spawn = <
-  Container extends StateContainer<any, any>,
+  Container extends IStateContainer<any, any>,
   Routines extends Record<string, Routine<Container, Services>>,
   Services extends object = any
 >(

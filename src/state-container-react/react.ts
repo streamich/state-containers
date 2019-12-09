@@ -1,12 +1,12 @@
 import * as React from 'react';
 import useObservable from 'react-use/lib/useObservable';
-import {Selector, Comparator, Connect} from './types';
+import {Comparator, Connect} from './types';
 import defaultComparator from 'fast-deep-equal';
-import {StateContainer, UnboxState} from '../state-container';
+import {IStateContainer, UnboxState} from '../state-container';
 
 const {useContext, useLayoutEffect, useRef, createElement: h} = React;
 
-export const createStateContainerReactHelpers = <Container extends StateContainer<any, any>>() => {
+export const createStateContainerReactHelpers = <Container extends IStateContainer<any, any>>() => {
   const context = React.createContext<Container>(null);
 
   const useContainer = (): Container => useContext(context);
@@ -20,7 +20,7 @@ export const createStateContainerReactHelpers = <Container extends StateContaine
   const useTransitions = () => useContainer().transitions;
 
   const useSelector = <Result>(
-    selector: Selector<UnboxState<Container>, Result>,
+    selector: (state: UnboxState<Container>) => Result,
     comparator: Comparator<Result> = defaultComparator,
   ): Result => {
     const {state$, state} = useContainer();

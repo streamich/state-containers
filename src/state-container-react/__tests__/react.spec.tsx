@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import {act, Simulate} from 'react-dom/test-utils';
-import {createStateContainer} from '../../state-container';
+import {StateContainer} from '../../state-container';
 import {createStateContainerReactHelpers} from '..';
 
 const create = <S, T extends object>(state: S, transitions: T = {} as T) => {
@@ -9,7 +9,7 @@ const create = <S, T extends object>(state: S, transitions: T = {} as T) => {
     set: state => newState => newState,
     ...transitions,
   };
-  const store = createStateContainer<typeof state, typeof pureTransitions>(state, pureTransitions);
+  const store = new StateContainer<typeof state, typeof pureTransitions>(state, pureTransitions);
   return {store, mutators: store.transitions};
 };
 

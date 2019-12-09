@@ -1,27 +1,13 @@
-import {createStateContainer} from '../createStateContainer';
+import {StateContainer, createStateContainer} from '../StateContainer';
 
 const create = <S, T extends object>(state: S, transitions: T = {} as T) => {
   const pureTransitions = {
     set: state => newState => newState,
     ...transitions,
   };
-  const store = createStateContainer<typeof state, typeof pureTransitions>(state, pureTransitions);
+  const store = new StateContainer<typeof state, typeof pureTransitions>(state, pureTransitions);
   return {store, mutators: store.transitions};
 };
-
-test('can create store', () => {
-  const {store} = create({});
-  expect(store).toMatchObject({
-    state: expect.any(Object),
-    getState: expect.any(Function),
-    state$: expect.any(Object),
-    transitions: expect.any(Object),
-    dispatch: expect.any(Function),
-    subscribe: expect.any(Function),
-    replaceReducer: expect.any(Function),
-    addMiddleware: expect.any(Function),
-  });
-});
 
 test('can set default state', () => {
   const defaultState = {
@@ -164,4 +150,74 @@ test('created mutators are saved in store object', () => {
   expect(typeof store.transitions.add).toBe('function');
   mutators.add(5);
   expect(store.state).toEqual({value: 2});
+});
+
+describe('selectors', () => {
+  test('can specify no selectors, or can skip them', () => {
+    createStateContainer({}, {});
+    createStateContainer({}, {}, {});
+  });
+
+  test('selector object is available on .selectors key', () => {
+    const container1 = createStateContainer({}, {}, {});
+    const container2 = createStateContainer({}, {}, { foo: () => () => 123 });
+    const container3 = createStateContainer({}, {}, { bar: () => () => 1, baz: () => () => 1 });
+
+    expect(Object.keys(container1.selectors).sort()).toEqual([]);
+    expect(Object.keys(container2.selectors).sort()).toEqual(['foo']);
+    expect(Object.keys(container3.selectors).sort()).toEqual(['bar', 'baz']);
+  });
+
+  test('selector without arguments returns correct state slice', () => {
+    const container = createStateContainer(
+      { name: 'Oleg' },
+      {
+        changeName: (state: { name: string }) => (name: string) => ({ ...state, name }),
+      },
+      { getName: (state: { name: string }) => () => state.name }
+    );
+
+    expect(container.selectors.getName()).toBe('Oleg');
+    container.transitions.changeName('Britney');
+    expect(container.selectors.getName()).toBe('Britney');
+  });
+
+  test('selector can accept an argument', () => {
+    const container = createStateContainer(
+      {
+        users: {
+          1: {
+            name: 'Darth',
+          },
+        },
+      },
+      {},
+      {
+        getUser: (state: any) => (id: number) => state.users[id],
+      }
+    );
+
+    expect(container.selectors.getUser(1)).toEqual({ name: 'Darth' });
+    expect(container.selectors.getUser(2)).toBe(undefined);
+  });
+
+  test('selector can accept multiple arguments', () => {
+    const container = createStateContainer(
+      {
+        users: {
+          5: {
+            name: 'Darth',
+            surname: 'Vader',
+          },
+        },
+      },
+      {},
+      {
+        getName: (state: any) => (id: number, which: 'name' | 'surname') => state.users[id][which],
+      }
+    );
+
+    expect(container.selectors.getName(5, 'name')).toEqual('Darth');
+    expect(container.selectors.getName(5, 'surname')).toEqual('Vader');
+  });
 });
