@@ -44,11 +44,6 @@ export class StateContainer<
     private readonly pureSelectors: PureSelectors = {} as PureSelectors,
   ) {
     this[$$observable] = this.state$;
-    this.addMiddleware(() => (dispatch) => (transition) => {
-      const result = dispatch(transition);
-      this.transition$.next(transition);
-      return result;
-    });
   }
 
   public getState(): State {
@@ -59,8 +54,9 @@ export class StateContainer<
     this.reducer = nextReducer;
   }
 
-  public dispatch = (action) => {
-    this.state$.next((this.state = this.reducer(this.state, action)));
+  public dispatch = (transition) => {
+    this.state$.next((this.state = this.reducer(this.state, transition)));
+    this.transition$.next(transition);
   };
 
   public addMiddleware(middleware) {
