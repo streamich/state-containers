@@ -2,11 +2,6 @@ import {Observable} from 'rxjs';
 
 export type Ensure<T, X> = T extends X ? T : never;
 export type EnsureFunction<F> = Ensure<F, (...args: any) => any>;
-
-export interface TransitionDescription<Type extends string = string, Args extends any[] = any[]> {
-  type: Type;
-  args: Args;
-}
 export type Transition<State, Args extends any[]> = (...args: Args) => State;
 export type PureTransition<State, Args extends any[]> = (state: State) => Transition<State, Args>;
 export type EnsurePureTransition<T> = Ensure<T, PureTransition<any, any>>;
@@ -21,7 +16,7 @@ export interface IStateContainer<State, PureTransitions extends object, PureSele
   state$: Observable<State>;
   reducer: Reducer<State>;
   replaceReducer: (nextReducer: Reducer<State>) => void;
-  dispatch: (action: TransitionDescription) => void;
+  dispatch: (action: AnyTransitionDescription) => void;
   transitions: PureTransitionsToTransitions<PureTransitions>;
   selectors: Readonly<PureSelectorsToSelectors<PureSelectors>>;
   addMiddleware: (middleware: Middleware<State>) => void;
@@ -32,9 +27,9 @@ export type Dispatch<T> = (action: T) => void;
 
 export type Middleware<State = any> = (
   store: Pick<IStateContainer<State, any>, 'getState' | 'dispatch'>,
-) => (next: (action: TransitionDescription) => TransitionDescription | any) => Dispatch<TransitionDescription>;
+) => (next: (action: AnyTransitionDescription) => AnyTransitionDescription | any) => Dispatch<AnyTransitionDescription>;
 
-export type Reducer<State> = (state: State, action: TransitionDescription) => State;
+export type Reducer<State> = (state: State, action: AnyTransitionDescription) => State;
 
 export type UnboxState<Container extends IStateContainer<any, any>> = Container extends IStateContainer<infer T, any>
   ? T
@@ -58,6 +53,7 @@ export interface TransitionDescription<Type, Args> {
   type: Type;
   args: Args;
 }
+export type AnyTransitionDescription = TransitionDescription<string, any[]>;
 export type EnsureTransitionDescription<T> = Ensure<T, TransitionDescription<any, any>>;
 export type TransitionDescriptions<T> = {
   [K in keyof T]: TransitionDescription<K, Parameters<EnsureFunction<ReturnType<EnsureFunction<T[K]>>>>>;
