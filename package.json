@@ -19,7 +19,6 @@
     "prepush": "yarn prettier:diff",
     "precommit": "pretty-quick --staged && yarn tslint",
     "tslint": "tslint 'src/**/*.{js,jsx,ts,tsx}' -t verbose",
-    "commitmsg": "commitlint -E GIT_PARAMS",
     "clean": "rimraf lib",
     "build": "tsc",
     "test": "jest --no-cache --config='jest.config.js'",
@@ -27,6 +26,7 @@
   },
   "keywords": [],
   "dependencies": {
+    "fast-deep-equal": "^3.1.1",
     "react-use": "^13.9.0"
   },
   "peerDependencies": {
@@ -34,8 +34,6 @@
     "rxjs": "*"
   },
   "devDependencies": {
-    "@commitlint/cli": "8.3.4",
-    "@commitlint/config-conventional": "8.3.4",
     "@semantic-release/changelog": "3.0.6",
     "@semantic-release/git": "7.0.18",
     "@semantic-release/npm": "5.3.5",

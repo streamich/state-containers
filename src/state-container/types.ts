@@ -53,3 +53,14 @@ export type PureSelectorToSelector<T extends PureSelector<any, any, any>> = Retu
 export type PureSelectorsToSelectors<T extends object> = {
   [K in keyof T]: PureSelectorToSelector<EnsurePureSelector<T[K]>>;
 };
+
+export interface TransitionDescription<Type, Args> {
+  type: Type;
+  args: Args;
+}
+export type EnsureTransitionDescription<T> = Ensure<T, TransitionDescription<any, any>>;
+export type TransitionDescriptions<T> = {
+  [K in keyof T]: TransitionDescription<K, Parameters<EnsureFunction<ReturnType<EnsureFunction<T[K]>>>>>;
+};
+
+export type Values<T> = T extends any[] ? T[number] : T extends object ? T[keyof T] : never;
