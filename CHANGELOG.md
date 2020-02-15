@@ -1,3 +1,15 @@
+# [1.2.0](https://github.com/streamich/state-containers/compare/v1.1.1...v1.2.0) (2020-02-15)
+
+
+### Features
+
+* 🎸 add transition$ ([f2ccffc](https://github.com/streamich/state-containers/commit/f2ccffcce1c4d6cf82964dde90cd405242eef7d9))
+
+
+### Performance Improvements
+
+* ⚡️ inline middleware in main reducer ([80e5512](https://github.com/streamich/state-containers/commit/80e5512a188332e7f53b019105644db2f18e956a))
+
 ## [1.1.1](https://github.com/streamich/state-containers/compare/v1.1.0...v1.1.1) (2019-12-09)
 
 
