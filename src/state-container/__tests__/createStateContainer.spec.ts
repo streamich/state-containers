@@ -1,4 +1,5 @@
 import {StateContainer, createStateContainer} from '../StateContainer';
+import {first, take} from 'rxjs/operators';
 
 const create = <S, T extends object>(state: S, transitions: T = {} as T) => {
   const pureTransitions = {
@@ -219,5 +220,74 @@ describe('selectors', () => {
 
     expect(container.selectors.getName(5, 'name')).toEqual('Darth');
     expect(container.selectors.getName(5, 'surname')).toEqual('Vader');
+  });
+});
+
+describe('transition$', () => {
+  test('fires on state transitions', () => {
+    const container = createStateContainer(
+      {name: 'Oleg'},
+      {
+        changeName: (state: {name: string}) => (name: string) => ({...state, name}),
+      },
+      {getName: (state: {name: string}) => () => state.name},
+    );
+    const spy = jest.fn();
+
+    container.transition$.subscribe(spy);
+
+    expect(spy).toHaveBeenCalledTimes(0);
+    container.transitions.changeName('lol');
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledWith({
+      type: 'changeName',
+      args: ['lol'],
+    });
+    container.transitions.changeName('foo');
+    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spy).toHaveBeenCalledWith({
+      type: 'changeName',
+      args: ['foo'],
+    });
+  });
+});
+
+describe('take', () => {
+  test('gets specified event', async () => {
+    const container = createStateContainer(
+      {name: 'Oleg'},
+      {
+        changeName: (state: {name: string}) => (name: string) => ({...state, name}),
+        noChange: (state: {name: string}) => () => state,
+      },
+      {getName: (state: {name: string}) => () => state.name},
+    );
+    const spy = jest.fn();
+    const spyError = jest.fn();
+
+    const promise = container.take('changeName').then(spy, spyError);
+
+    await new Promise((r) => setTimeout(r, 1));
+    expect(spy).toHaveBeenCalledTimes(0);
+    expect(spyError).toHaveBeenCalledTimes(0);
+
+    container.transitions.noChange();
+
+    await new Promise((r) => setTimeout(r, 1));
+    expect(spy).toHaveBeenCalledTimes(0);
+    expect(spyError).toHaveBeenCalledTimes(0);
+
+    container.transitions.changeName('foo');
+
+    await new Promise((r) => setTimeout(r, 1));
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spyError).toHaveBeenCalledTimes(0);
+
+    expect(spy).toHaveBeenCalledWith({
+      type: 'changeName',
+      args: ['foo'],
+    });
+
+    await promise;
   });
 });
