@@ -2,7 +2,7 @@ import {StateContainer, createStateContainer} from '../StateContainer';
 
 const create = <S, T extends object>(state: S, transitions: T = {} as T) => {
   const pureTransitions = {
-    set: state => newState => newState,
+    set: (state) => (newState) => newState,
     ...transitions,
   };
   const store = new StateContainer<typeof state, typeof pureTransitions>(state, pureTransitions);
@@ -85,7 +85,7 @@ test('creates impure mutators from pure mutators', () => {
   const {store, mutators} = create(
     {},
     {
-      setFoo: _ => bar => ({foo: bar}),
+      setFoo: (_) => (bar) => ({foo: bar}),
     },
   );
 
@@ -99,8 +99,8 @@ test('mutators can update state', () => {
       foo: 'bar',
     },
     {
-      add: state => increment => ({...state, value: state.value + increment}),
-      setFoo: state => bar => ({...state, foo: bar}),
+      add: (state) => (increment) => ({...state, value: state.value + increment}),
+      setFoo: (state) => (bar) => ({...state, foo: bar}),
     },
   );
 
@@ -130,7 +130,7 @@ test('mutators methods are not bound', () => {
   const {store, mutators} = create(
     {value: -3},
     {
-      add: state => increment => ({...state, value: state.value + increment}),
+      add: (state) => (increment) => ({...state, value: state.value + increment}),
     },
   );
 
@@ -143,7 +143,7 @@ test('created mutators are saved in store object', () => {
   const {store, mutators} = create(
     {value: -3},
     {
-      add: state => increment => ({...state, value: state.value + increment}),
+      add: (state) => (increment) => ({...state, value: state.value + increment}),
     },
   );
 
@@ -160,8 +160,8 @@ describe('selectors', () => {
 
   test('selector object is available on .selectors key', () => {
     const container1 = createStateContainer({}, {}, {});
-    const container2 = createStateContainer({}, {}, { foo: () => () => 123 });
-    const container3 = createStateContainer({}, {}, { bar: () => () => 1, baz: () => () => 1 });
+    const container2 = createStateContainer({}, {}, {foo: () => () => 123});
+    const container3 = createStateContainer({}, {}, {bar: () => () => 1, baz: () => () => 1});
 
     expect(Object.keys(container1.selectors).sort()).toEqual([]);
     expect(Object.keys(container2.selectors).sort()).toEqual(['foo']);
@@ -170,11 +170,11 @@ describe('selectors', () => {
 
   test('selector without arguments returns correct state slice', () => {
     const container = createStateContainer(
-      { name: 'Oleg' },
+      {name: 'Oleg'},
       {
-        changeName: (state: { name: string }) => (name: string) => ({ ...state, name }),
+        changeName: (state: {name: string}) => (name: string) => ({...state, name}),
       },
-      { getName: (state: { name: string }) => () => state.name }
+      {getName: (state: {name: string}) => () => state.name},
     );
 
     expect(container.selectors.getName()).toBe('Oleg');
@@ -194,10 +194,10 @@ describe('selectors', () => {
       {},
       {
         getUser: (state: any) => (id: number) => state.users[id],
-      }
+      },
     );
 
-    expect(container.selectors.getUser(1)).toEqual({ name: 'Darth' });
+    expect(container.selectors.getUser(1)).toEqual({name: 'Darth'});
     expect(container.selectors.getUser(2)).toBe(undefined);
   });
 
@@ -214,7 +214,7 @@ describe('selectors', () => {
       {},
       {
         getName: (state: any) => (id: number, which: 'name' | 'surname') => state.users[id][which],
-      }
+      },
     );
 
     expect(container.selectors.getName(5, 'name')).toEqual('Darth');

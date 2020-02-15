@@ -6,7 +6,7 @@ import {createStateContainerReactHelpers} from '..';
 
 const create = <S, T extends object>(state: S, transitions: T = {} as T) => {
   const pureTransitions = {
-    set: state => newState => newState,
+    set: (state) => (newState) => newState,
     ...transitions,
   };
   const store = new StateContainer<typeof state, typeof pureTransitions>(state, pureTransitions);
@@ -42,7 +42,7 @@ test('<Provider> passes state to <Consumer>', () => {
 
   ReactDOM.render(
     <Provider value={store}>
-      <Consumer>{store => store.state.hello}</Consumer>
+      <Consumer>{(store) => store.state.hello}</Consumer>
     </Provider>,
     container,
   );
@@ -89,7 +89,7 @@ test('context receives Redux store', () => {
   ReactDOM.render(
     /* eslint-disable no-shadow */
     <Provider value={store}>
-      <context.Consumer>{store => store.state.foo}</context.Consumer>
+      <context.Consumer>{(store) => store.state.foo}</context.Consumer>
     </Provider>,
     /* eslint-enable no-shadow */
     container,
@@ -148,7 +148,7 @@ describe('hooks', () => {
       } = create(
         {foo: 'bar'},
         {
-          setFoo: state => foo => ({...state, foo}),
+          setFoo: (state) => (foo) => ({...state, foo}),
         },
       );
       const {Provider, useState} = createStateContainerReactHelpers<typeof store>();
@@ -184,7 +184,7 @@ describe('hooks', () => {
           cnt: 0,
         },
         {
-          increment: state => value => ({...state, cnt: state.cnt + value}),
+          increment: (state) => (value) => ({...state, cnt: state.cnt + value}),
         },
       );
 
@@ -298,21 +298,21 @@ describe('hooks', () => {
         container,
       );
 
-      await new Promise(r => setTimeout(r, 1));
+      await new Promise((r) => setTimeout(r, 1));
       expect(cnt).toBe(1);
 
       act(() => {
         mutators.set({a: 'c', foo: 'bar'});
       });
 
-      await new Promise(r => setTimeout(r, 1));
+      await new Promise((r) => setTimeout(r, 1));
       expect(cnt).toBe(1);
 
       act(() => {
         mutators.set({a: 'd', foo: 'bar 2'});
       });
 
-      await new Promise(r => setTimeout(r, 1));
+      await new Promise((r) => setTimeout(r, 1));
       expect(cnt).toBe(2);
     });
 
@@ -334,21 +334,21 @@ describe('hooks', () => {
         container,
       );
 
-      await new Promise(r => setTimeout(r, 1));
+      await new Promise((r) => setTimeout(r, 1));
       expect(cnt).toBe(1);
 
       act(() => {
         mutators.set({foo: {bar: 'baz'}});
       });
 
-      await new Promise(r => setTimeout(r, 1));
+      await new Promise((r) => setTimeout(r, 1));
       expect(cnt).toBe(1);
 
       act(() => {
         mutators.set({foo: {bar: 'qux'}});
       });
 
-      await new Promise(r => setTimeout(r, 1));
+      await new Promise((r) => setTimeout(r, 1));
       expect(cnt).toBe(2);
     });
 
@@ -356,7 +356,7 @@ describe('hooks', () => {
       const {store, mutators} = create(
         {foo: {bar: 'baz'}},
         {
-          set: state => newState => newState,
+          set: (state) => (newState) => newState,
         },
       );
       const selector = (state: {foo: any}) => state.foo;
@@ -376,14 +376,14 @@ describe('hooks', () => {
         container,
       );
 
-      await new Promise(r => setTimeout(r, 1));
+      await new Promise((r) => setTimeout(r, 1));
       expect(cnt).toBe(1);
 
       act(() => {
         mutators.set({foo: {bar: 'baz'}});
       });
 
-      await new Promise(r => setTimeout(r, 1));
+      await new Promise((r) => setTimeout(r, 1));
       expect(cnt).toBe(1);
     });
 

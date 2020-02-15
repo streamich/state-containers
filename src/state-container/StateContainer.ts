@@ -3,14 +3,15 @@ import {IStateContainer, PureTransitionsToTransitions, PureSelectorsToSelectors}
 
 const $$observable = (typeof Symbol === 'function' && (Symbol as any).observable) || '@@observable';
 
-export class StateContainer<State, PureTransitions extends object, PureSelectors extends object = {}> implements IStateContainer<State, PureTransitions, PureSelectors> {
+export class StateContainer<State, PureTransitions extends object, PureSelectors extends object = {}>
+  implements IStateContainer<State, PureTransitions, PureSelectors> {
   public state$ = new Subject<State>();
-  
+
   public reducer = (state, action) => {
     const pureTransition = this.pureTransitions[action.type];
     return pureTransition ? pureTransition(state)(...action.args) : state;
   };
-  
+
   public transitions = Object.keys(this.pureTransitions).reduce<PureTransitionsToTransitions<PureTransitions>>(
     (acc, type) => ({...acc, [type]: (...args) => this.dispatch({type, args})}),
     {} as PureTransitionsToTransitions<PureTransitions>,
@@ -21,10 +22,14 @@ export class StateContainer<State, PureTransitions extends object, PureSelectors
       ...acc,
       [selector]: (...args: any) => (this.pureSelectors as any)[selector](this.state)(...args),
     }),
-    {} as PureSelectorsToSelectors<PureSelectors>
+    {} as PureSelectorsToSelectors<PureSelectors>,
   );
-    
-  constructor (public state: State, private readonly pureTransitions: PureTransitions, private readonly pureSelectors: PureSelectors = {} as PureSelectors) {
+
+  constructor(
+    public state: State,
+    private readonly pureTransitions: PureTransitions,
+    private readonly pureSelectors: PureSelectors = {} as PureSelectors,
+  ) {
     this[$$observable] = this.state$;
   }
 
@@ -37,13 +42,13 @@ export class StateContainer<State, PureTransitions extends object, PureSelectors
   }
 
   dispatch = (action) => {
-    this.state$.next(this.state = this.reducer(this.state, action));
-  }
+    this.state$.next((this.state = this.reducer(this.state, action)));
+  };
 
   addMiddleware(middleware) {
     this.dispatch = middleware({
       getState: () => this.getState(),
-      dispatch: action => this.dispatch(action),
+      dispatch: (action) => this.dispatch(action),
     })(this.dispatch);
   }
 
@@ -53,5 +58,8 @@ export class StateContainer<State, PureTransitions extends object, PureSelectors
   }
 }
 
-export const createStateContainer = <State, PureTransitions extends object, PureSelectors extends object = {}>(state: State, pureTransitions: PureTransitions, pureSelectors?: PureSelectors) =>
-  new StateContainer(state, pureTransitions, pureSelectors);
+export const createStateContainer = <State, PureTransitions extends object, PureSelectors extends object = {}>(
+  state: State,
+  pureTransitions: PureTransitions,
+  pureSelectors?: PureSelectors,
+) => new StateContainer(state, pureTransitions, pureSelectors);

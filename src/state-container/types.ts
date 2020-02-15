@@ -12,7 +12,7 @@ export type PureTransition<State, Args extends any[]> = (state: State) => Transi
 export type EnsurePureTransition<T> = Ensure<T, PureTransition<any, any>>;
 export type PureTransitionToTransition<T extends PureTransition<any, any>> = ReturnType<T>;
 export type PureTransitionsToTransitions<T extends object> = {
-  [K in keyof T]: PureTransitionToTransition<EnsurePureTransition<T[K]>>
+  [K in keyof T]: PureTransitionToTransition<EnsurePureTransition<T[K]>>;
 };
 
 export interface IStateContainer<State, PureTransitions extends object, PureSelectors extends object = {}> {
@@ -47,13 +47,9 @@ export type UnboxTransitions<Container extends IStateContainer<any, any>> = Cont
   : never;
 
 export type Selector<Result, Args extends any[] = []> = (...args: Args) => Result;
-export type PureSelector<State, Result, Args extends any[] = []> = (
-  state: State
-) => Selector<Result, Args>;
+export type PureSelector<State, Result, Args extends any[] = []> = (state: State) => Selector<Result, Args>;
 export type EnsurePureSelector<T> = Ensure<T, PureSelector<any, any, any>>;
-export type PureSelectorToSelector<T extends PureSelector<any, any, any>> = ReturnType<
-  EnsurePureSelector<T>
->;
+export type PureSelectorToSelector<T extends PureSelector<any, any, any>> = ReturnType<EnsurePureSelector<T>>;
 export type PureSelectorsToSelectors<T extends object> = {
   [K in keyof T]: PureSelectorToSelector<EnsurePureSelector<T[K]>>;
 };

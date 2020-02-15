@@ -11,7 +11,7 @@ export const createSpawner = <
   services: Services,
 ): Spawner<Container, Services> => {
   const action$ = new Subject<TransitionDescription>();
-  container.addMiddleware(() => dispatch => action => {
+  container.addMiddleware(() => (dispatch) => (action) => {
     const result = dispatch(action);
     action$.next(action);
     return result;
@@ -19,7 +19,7 @@ export const createSpawner = <
 
   const take: Take<ActionType> = <Type extends string = ActionType>(type: Type): Promise<TransitionDescription<Type>> =>
     new Promise<TransitionDescription<Type>>((resolve, reject) => {
-      const subscription = action$.subscribe(action => {
+      const subscription = action$.subscribe((action) => {
         if (((action.type as unknown) as Type) === type) {
           subscription.unsubscribe();
           resolve((action as unknown) as TransitionDescription<Type>);
@@ -29,7 +29,7 @@ export const createSpawner = <
 
   const takeFirst: TakeRace<ActionType> = <Type extends string = ActionType>(...types: Type[]) =>
     new Promise<TransitionDescription<Type>>((resolve, reject) => {
-      const subscription = action$.subscribe(action => {
+      const subscription = action$.subscribe((action) => {
         if (types.indexOf((action.type as unknown) as Type) > -1) {
           subscription.unsubscribe();
           resolve((action as unknown) as TransitionDescription<Type>);

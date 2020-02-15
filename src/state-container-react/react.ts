@@ -30,23 +30,20 @@ export const createStateContainerReactHelpers = <Container extends IStateContain
       lastValueRef.current = newValue;
       return newValue;
     });
-    useLayoutEffect(
-      () => {
-        const subscription = state$.subscribe(state => {
-          const newValue = selector(state);
-          if (!comparator(lastValueRef.current, newValue)) {
-            lastValueRef.current = newValue;
-            setValue(newValue);
-          }
-        });
-        return () => subscription.unsubscribe();
-      },
-      [state$, comparator],
-    );
+    useLayoutEffect(() => {
+      const subscription = state$.subscribe((state) => {
+        const newValue = selector(state);
+        if (!comparator(lastValueRef.current, newValue)) {
+          lastValueRef.current = newValue;
+          setValue(newValue);
+        }
+      });
+      return () => subscription.unsubscribe();
+    }, [state$, comparator]);
     return value;
   };
 
-  const connect: Connect<UnboxState<Container>> = mapStateToProp => component => props =>
+  const connect: Connect<UnboxState<Container>> = (mapStateToProp) => (component) => (props) =>
     h(component, {...useSelector(mapStateToProp), ...props} as any);
 
   return {
