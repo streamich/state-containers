@@ -38,7 +38,7 @@
     "@semantic-release/git": "9.0.0",
     "@semantic-release/npm": "7.0.10",
     "@types/jest": "26.0.22",
-    "husky": "5.2.0",
+    "husky": "6.0.0",
     "jest": "26.6.3",
     "prettier": "2.2.1",
     "pretty-quick": "3.1.0",
